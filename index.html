@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Розрахунок по формулі</title>
+  <title>Калькулятор y та p</title>
+
   <style>
     :root{
-      --bg:#dff0fb;
+      --bg:#f6f7fb;
       --card:#ffffff;
       --text:#0f172a;
       --muted:#64748b;
       --stroke:#e2e8f0;
-      --accent:#0b5e8a;
-      --accent-2:#0a4e72;
-      --result-bg:#cfe9f9;
-      --result-text:#0b1f2a;
+      --accent:#2563eb;
+      --accent-2:#1d4ed8;
+      --result:#1e40af;
+      --result-bg:#dbeafe;
       --danger:#dc2626;
-      --radius:18px;
-      --shadow: 0 18px 45px rgba(15,23,42,0.10);
+      --radius:14px;
     }
 
     *{ box-sizing:border-box; }
@@ -26,240 +26,236 @@
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
       color: var(--text);
+      padding: 48px 16px;
     }
 
-    .page{
-      padding: 56px 16px 80px;
-    }
+    .wrap{ max-width: 980px; margin: 0 auto; }
 
-    .hero{
-      max-width: 980px;
-      margin: 0 auto 24px;
-      text-align:center;
-    }
-    .hero h1{
-      margin:0 0 8px;
-      font-size: 44px;
-      letter-spacing: -0.02em;
-    }
-    .hero p{
-      margin:0;
-      color: var(--muted);
-      font-size: 16px;
+    .header{ margin-bottom: 18px; }
+    .title{ font-size: 28px; margin:0 0 6px; font-weight: 800; }
+    .subtitle{ margin:0; color: var(--muted); font-size: 14px; line-height:1.5; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: start;
     }
 
     .card{
-      max-width: 980px;
-      margin: 0 auto;
       background: var(--card);
+      border: 1px solid var(--stroke);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 28px;
-      border: 1px solid rgba(226,232,240,0.9);
+      box-shadow: 0 10px 30px rgba(15,23,42,0.06);
     }
+    .pad{ padding: 18px; }
 
-    .section{
-      padding: 8px 0 26px;
-    }
-
-    .section-header{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      margin-bottom: 18px;
-    }
-    .section-title{
-      font-size: 22px;
-      font-weight: 800;
-      margin:0;
-    }
-
-    .formula-toggle{
-      position:absolute;
-      right:0;
-      top:50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: 0;
-      padding: 6px 0;
-      color: #0b5e8a;
-      font-weight: 700;
-      text-decoration: underline;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .formula{
-      display:none;
-      margin: 10px 0 18px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(15,23,42,0.12);
-      background: #0b1220;
-      color: #e5e7eb;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 13px;
-      line-height: 1.55;
-      overflow:auto;
-    }
-
-    .grid-top{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 16px;
-      margin-bottom: 14px;
-    }
-
-    .grid-bottom{
+    .form-grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      align-items:end;
-      margin-bottom: 18px;
+      gap: 14px 18px;
     }
 
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap: 8px;
-    }
-
+    .field{ display:flex; flex-direction:column; gap:6px; }
     .label{
-      font-size: 12px;
+      font-size:12px;
+      color: var(--muted);
       font-weight: 800;
-      letter-spacing: 0.06em;
+      letter-spacing: .06em;
       text-transform: uppercase;
-      color: #111827;
     }
 
-    .input-wrap{
-      position: relative;
-    }
-
+    .input-wrap{ position: relative; }
     .input{
       width:100%;
-      height: 46px;
-      border-radius: 12px;
+      height: 42px;
       border: 1px solid var(--stroke);
-      padding: 0 56px 0 14px;
-      font-size: 15px;
-      outline: none;
+      border-radius: 10px;
+      padding: 0 74px 0 12px;
+      font-size:14px;
+      outline:none;
       background:#fff;
     }
     .input:focus{
-      border-color: rgba(11,94,138,0.45);
-      box-shadow: 0 0 0 3px rgba(11,94,138,0.12);
+      border-color: rgba(37,99,235,0.55);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
     }
 
     .unit{
       position:absolute;
-      right: 12px;
+      right: 10px;
       top:50%;
       transform: translateY(-50%);
-      font-size: 13px;
-      color:#111827;
-      font-weight: 700;
-      opacity: 0.9;
-      pointer-events:none;
-    }
-
-    .radio-wrap{
-      height: 46px;
-      border-radius: 12px;
-      border: 1px solid var(--stroke);
-      display:flex;
-      align-items:center;
-      gap: 20px;
-      padding: 0 14px;
-    }
-    .radio-wrap label{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      font-size: 15px;
-      color:#111827;
-      font-weight: 600;
-    }
-
-    .cta-row{
-      display:flex;
-      justify-content:center;
-      margin: 6px 0 18px;
-    }
-    .btn{
-      border: 0;
-      border-radius: 10px;
-      background: var(--accent);
-      color:#fff;
+      font-size: 12px;
       font-weight: 800;
-      font-size: 16px;
-      padding: 12px 26px;
+      color:#111827;
+      opacity:.85;
+      pointer-events:none;
+      white-space: nowrap;
+    }
+
+    .unit-select{
+      position:absolute;
+      right: 8px;
+      top:50%;
+      transform: translateY(-50%);
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid var(--stroke);
+      background:#fff;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 0 8px;
+      outline:none;
+      color:#111827;
+    }
+    .input.has-select{ padding-right: 120px; }
+
+    .radio-row{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      height: 42px;
+      border: 1px solid var(--stroke);
+      border-radius: 10px;
+      padding: 0 12px;
+    }
+    .radio-row label{
+      display:flex;
+      gap: 6px;
+      align-items:center;
+      font-size:14px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .btn{
+      appearance:none;
+      border:0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 800;
+      font-size: 14px;
       cursor:pointer;
-      min-width: 220px;
     }
-    .btn:hover{ background: var(--accent-2); }
-
-    .result-bar{
-      background: var(--result-bg);
-      border-radius: 14px;
-      padding: 18px 16px;
-      text-align:center;
-      font-size: 34px;
-      font-weight: 900;
-      color: var(--result-text);
-      letter-spacing: 0.02em;
-    }
-
-    .divider{
-      height:1px;
-      background: rgba(15,23,42,0.12);
-      margin: 18px 0 22px;
+    .btn-primary{ background: var(--accent); color:#fff; }
+    .btn-primary:hover{ background: var(--accent-2); }
+    .btn-ghost{
+      background: transparent;
+      border: 1px solid var(--stroke);
+      color: var(--text);
     }
 
     .error{
-      display:none;
-      margin: 10px auto 0;
-      max-width: 720px;
+      margin-top: 10px;
       color: var(--danger);
+      font-size: 13px;
+      display:none;
       font-weight: 700;
-      font-size: 14px;
-      text-align:center;
+    }
+
+    .note{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.45;
+    }
+
+    .results{ display:flex; flex-direction: column; gap: 12px; }
+
+    .result-box{
+      border-radius: 14px;
+      padding: 14px;
+      background: var(--result-bg);
+      border: 1px solid rgba(30,64,175,0.20);
+    }
+    .kicker{
+      font-size: 12px;
+      color: rgba(30,64,175,0.85);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 0 0 6px;
+    }
+    .value{
+      margin: 0;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--result);
+      word-break: break-word;
+    }
+
+    .mini{
+      background:#fff;
+      border:1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .mini .k{ margin:0 0 4px; font-size:12px; color: var(--muted); font-weight:900; letter-spacing:.05em; text-transform:uppercase;}
+    .mini .v{ margin:0; font-size:14px; font-weight:900; color: var(--text); }
+
+    .formula-wrap{ margin-top: 14px; display:grid; gap: 10px; }
+
+    .toggle-row{ display:flex; gap:10px; flex-wrap: wrap; }
+    .toggle{
+      background: transparent;
+      border: 1px solid var(--stroke);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 900;
+      cursor:pointer;
+      font-size: 13px;
+    }
+
+    .formula{
+      display:none;
+      background:#0b1220;
+      color:#e5e7eb;
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(148,163,184,0.22);
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      overflow:auto;
+      white-space: pre-wrap;
     }
 
     @media (max-width: 860px){
-      .hero h1{ font-size: 34px; }
-      .grid-top{ grid-template-columns: 1fr; }
-      .grid-bottom{ grid-template-columns: 1fr; }
-      .formula-toggle{ position:static; transform:none; margin-left:auto; }
-      .section-header{ justify-content:space-between; }
+      .grid{ grid-template-columns: 1fr; }
+      .form-grid{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
+
 <body>
-  <main class="page">
-    <header class="hero">
-      <h1>Lorem Ipsum</h1>
-      <p>Lorem Ipsum</p>
+  <div class="wrap">
+    <header class="header">
+      <h1 class="title">Калькулятор показників y та p</h1>
+      <p class="subtitle">
+        Усі поля обовʼязкові. Ферменти вводяться в U/L, вік — у роках. Холестерин можна вводити у ммоль/л або mg/dL (буде конвертовано до ммоль/л для формули).
+      </p>
     </header>
 
-    <section class="card">
-      <!-- ====== Y SECTION ====== -->
-      <div class="section">
-        <div class="section-header">
-          <h2 class="section-title">Розрахунок y</h2>
-          <button class="formula-toggle" id="toggleY" type="button">Показати формулу</button>
-        </div>
-
-        <pre class="formula" id="formulaY"></pre>
-
-        <form id="yForm" novalidate>
-          <div class="grid-top">
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card pad">
+        <form id="calcForm" novalidate>
+          <div class="form-grid">
             <div class="field">
               <div class="label">ГГТ</div>
               <div class="input-wrap">
                 <input class="input" id="ggt" type="number" min="0" step="0.01" required />
-                <span class="unit">од/л</span>
+                <span class="unit">U/L</span>
               </div>
             </div>
 
@@ -267,7 +263,7 @@
               <div class="label">АСТ</div>
               <div class="input-wrap">
                 <input class="input" id="ast" type="number" min="0" step="0.01" required />
-                <span class="unit">од/л</span>
+                <span class="unit">U/L</span>
               </div>
             </div>
 
@@ -275,88 +271,111 @@
               <div class="label">АЛТ</div>
               <div class="input-wrap">
                 <input class="input" id="alt" type="number" min="0" step="0.01" required />
-                <span class="unit">од/л</span>
+                <span class="unit">U/L</span>
               </div>
             </div>
-          </div>
 
-          <div class="grid-bottom">
+            <div class="field">
+              <div class="label">Вік</div>
+              <div class="input-wrap">
+                <input class="input" id="age" type="number" min="0" step="1" required />
+                <span class="unit">років</span>
+              </div>
+            </div>
+
             <div class="field">
               <div class="label">Стать</div>
-              <div class="radio-wrap">
-                <label><input type="radio" name="sex" value="1" required /> Чоловік</label>
-                <label><input type="radio" name="sex" value="0" required /> Жінка</label>
+              <div class="radio-row">
+                <label><input type="radio" name="sex" value="1" checked /> Жінка</label>
+                <label><input type="radio" name="sex" value="2" /> Чоловік</label>
               </div>
             </div>
 
             <div class="field">
               <div class="label">Холестерин</div>
               <div class="input-wrap">
-                <input class="input" id="chol" type="number" min="0" step="0.01" required />
-                <span class="unit">ммоль/л</span>
+                <input class="input has-select" id="chol" type="number" min="0" step="0.01" required />
+                <select class="unit-select" id="cholUnit" aria-label="Одиниці холестерину">
+                  <option value="mmolL" selected>ммоль/л</option>
+                  <option value="mgdL">mg/dL</option>
+                </select>
               </div>
             </div>
-
-            <!-- Вік потрібен для формули. Щоб структура лишалась як на фото,
-                 вік робимо окремим полем під другим рядком (візуально не ламає layout). -->
           </div>
 
-          <div class="field" style="max-width: 320px; margin: 0 auto 6px;">
-            <div class="label">Вік</div>
-            <div class="input-wrap">
-              <input class="input" id="age" type="number" min="0" step="1" required />
-              <span class="unit">років</span>
-            </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Розрахувати</button>
+            <button class="btn btn-ghost" type="button" id="resetBtn">Скинути</button>
           </div>
 
-          <div class="cta-row">
-            <button class="btn" type="submit">Розрахувати y</button>
-          </div>
-
-          <div class="result-bar" id="outY">y = XXX</div>
           <div class="error" id="errorBox"></div>
+
+          <div class="note">
+            Формула регресії чутлива до одиниць. Холестерин автоматично приводиться до ммоль/л.
+          </div>
+
+          <div class="formula-wrap">
+            <div class="toggle-row">
+              <button class="toggle" type="button" id="toggleY" data-open="false">Показати формулу y</button>
+              <button class="toggle" type="button" id="toggleP" data-open="false">Показати формулу p</button>
+            </div>
+
+            <div class="formula" id="formulaY"></div>
+            <div class="formula" id="formulaP"></div>
+          </div>
         </form>
-      </div>
+      </section>
 
-      <div class="divider"></div>
-
-      <!-- ====== P SECTION ====== -->
-      <div class="section" style="padding-bottom: 6px;">
-        <div class="section-header">
-          <h2 class="section-title">Розрахунок p</h2>
-          <button class="formula-toggle" id="toggleP" type="button">Показати формулу</button>
+      <!-- RIGHT -->
+      <aside class="results">
+        <div class="result-box">
+          <p class="kicker">y =</p>
+          <p class="value" id="outY">—</p>
         </div>
 
-        <pre class="formula" id="formulaP"></pre>
+        <div class="result-box">
+          <p class="kicker">p =</p>
+          <p class="value" id="outP">—</p>
+        </div>
 
-        <div class="result-bar" id="outP">p = XXX</div>
-      </div>
-    </section>
-  </main>
+        <div class="mini">
+          <p class="k">Співвідношення ГГТ/АСТ</p>
+          <p class="v" id="outRatio">—</p>
+        </div>
+      </aside>
+    </div>
+  </div>
 
   <script>
-    // ====== COEFFICIENTS (edit if needed) ======
-    // Якщо треба змінити знак біля 1.44 — змінюється ТІЛЬКИ K_RATIO.
-    const K_RATIO = -1.44;   // (GGT/AST)
-    const K_ALT   = -0.0006; // ALT
-    const K_AGE   = -0.11;   // AGE
-    const K_SEX   = -1.93;   // SEX (0/1)
-    const K_CHOL  =  0.385;  // CHOL
+    // ====== РЕГРЕСІЙНІ КОЕФІЦІЄНТИ (як на твоїх формулах) ======
+    // y = 1.44*(GGT/AST) - 0.0006*ALT - 0.11*AGE - 1.93*SEX + 0.385*CHOL + 1.214
+    // SEX: 1 (жінка), 2 (чоловік)
+    // CHOL: ммоль/л (mg/dL конвертуємо до ммоль/л)
+
+    const K_RATIO =  1.44;   // (GGT/AST)
+    const K_ALT   = -0.0006; // ALT (U/L)
+    const K_AGE   = -0.11;   // AGE (years)
+    const K_SEX   = -1.93;   // SEX (1/2)
+    const K_CHOL  =  0.385;  // CHOL (mmol/L)
     const CONST   =  1.214;  // constant
 
-    const yForm = document.getElementById('yForm');
+    const form = document.getElementById('calcForm');
     const errorBox = document.getElementById('errorBox');
 
     const outY = document.getElementById('outY');
     const outP = document.getElementById('outP');
+    const outRatio = document.getElementById('outRatio');
+
+    const resetBtn = document.getElementById('resetBtn');
 
     const toggleY = document.getElementById('toggleY');
     const toggleP = document.getElementById('toggleP');
-
     const formulaY = document.getElementById('formulaY');
     const formulaP = document.getElementById('formulaP');
 
-    function setError(msg){
+    const cholUnit = document.getElementById('cholUnit');
+
+    function showError(msg){
       errorBox.textContent = msg;
       errorBox.style.display = 'block';
     }
@@ -365,58 +384,66 @@
       errorBox.style.display = 'none';
     }
 
-    function num(id){
-      const v = String(document.getElementById(id).value).replace(',', '.').trim();
+    function readNumber(id){
+      const el = document.getElementById(id);
+      const v = String(el.value).replace(',', '.').trim();
       return v === '' ? NaN : Number(v);
+    }
+
+    // 1 mmol/L холестерину ≈ 38.67 mg/dL
+    // mmol/L = mg/dL / 38.67
+    function cholesterolToMmolL(value, unit){
+      if (!isFinite(value)) return NaN;
+      if (unit === 'mgdL') return value / 38.67;
+      return value;
+    }
+
+    function setToggle(btn, panel, isOpen){
+      btn.dataset.open = String(isOpen);
+      panel.style.display = isOpen ? 'block' : 'none';
+      btn.textContent = (isOpen ? 'Сховати' : 'Показати') + (btn === toggleY ? ' формулу y' : ' формулу p');
     }
 
     function renderFormulas(){
       formulaY.textContent =
-`y = ${K_RATIO}·(ГГТ/АСТ) + ${K_ALT}·АЛТ + ${K_AGE}·Вік + ${K_SEX}·Стать + ${K_CHOL}·Холестерин + ${CONST}
-де:
-Стать = 0 (Жінка) або 1 (Чоловік)`;
+`y = 1.44 × (ГГТ/АСТ) − 0.0006 × АЛТ − 0.11 × Вік − 1.93 × Стать + 0.385 × Холестерин + 1.214
+
+Одиниці:
+ГГТ, АСТ, АЛТ — U/L
+Вік — роки
+Стать — 1 (жінка), 2 (чоловік)
+Холестерин — ммоль/л`;
 
       formulaP.textContent =
-`p = 1 / (1 + 2.718^(−y)) · 100
-еквівалентно:
-p = 1 / (1 + e^(−y)) · 100`;
+`p = 1 / (1 + 2.718^(−y)) × 100`;
     }
 
-    function toggle(btn, panel){
-      const isOpen = panel.style.display === 'block';
-      panel.style.display = isOpen ? 'none' : 'block';
-      btn.textContent = isOpen ? 'Показати формулу' : 'Сховати формулу';
-    }
-
-    toggleY.addEventListener('click', () => toggle(toggleY, formulaY));
-    toggleP.addEventListener('click', () => toggle(toggleP, formulaP));
-
-    function calcYandP(){
+    function calc(){
       clearError();
 
-      const ggt = num('ggt');
-      const ast = num('ast');
-      const alt = num('alt');
-      const chol = num('chol');
-      const age = num('age');
+      const ggt = readNumber('ggt');   // U/L
+      const ast = readNumber('ast');   // U/L
+      const alt = readNumber('alt');   // U/L
+      const age = readNumber('age');   // years
+      const cholRaw = readNumber('chol');
 
-      const sexEl = yForm.querySelector('input[name="sex"]:checked');
-      const sex = sexEl ? Number(sexEl.value) : NaN;
+      const sex = Number(form.querySelector('input[name="sex"]:checked').value);
 
-      const ok = [ggt, ast, alt, chol, age, sex].every(v => Number.isFinite(v));
-      if(!ok){
-        setError('Заповни всі поля (усі обовʼязкові).');
+      const required = [ggt, ast, alt, age, cholRaw, sex];
+      if (!required.every(v => isFinite(v))) {
+        showError('Заповни всі поля коректними числами.');
         return;
       }
-      if(ast === 0){
-        setError('АСТ не може бути 0 (ділення на нуль).');
+      if (ast === 0){
+        showError('АСТ не може бути 0 (ділення на нуль).');
         return;
       }
-      if([ggt, ast, alt, chol, age].some(v => v < 0)){
-        setError('Значення не можуть бути відʼємними.');
+      if ([ggt, ast, alt, age, cholRaw].some(v => v < 0)){
+        showError('Значення не можуть бути відʼємними.');
         return;
       }
 
+      const chol = cholesterolToMmolL(cholRaw, cholUnit.value); // mmol/L
       const ratio = ggt / ast;
 
       const y =
@@ -427,21 +454,42 @@ p = 1 / (1 + e^(−y)) · 100`;
         (K_CHOL * chol) +
         CONST;
 
+      // p = 1/(1+2.718^(-y))*100  == 1/(1+e^(-y))*100
       const p = 1 / (1 + Math.exp(-y)) * 100;
 
-      outY.textContent = 'y = ' + y.toFixed(3);
-      outP.textContent = 'p = ' + p.toFixed(1);
+      outY.textContent = y.toFixed(3);
+      outP.textContent = p.toFixed(1) + ' %';
+      outRatio.textContent = ratio.toFixed(3);
     }
 
-    yForm.addEventListener('submit', (e) => {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      calcYandP();
+      calc();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      clearError();
+      form.reset();
+      outY.textContent = '—';
+      outP.textContent = '—';
+      outRatio.textContent = '—';
+      cholUnit.value = 'mmolL';
+    });
+
+    toggleY.addEventListener('click', () => {
+      const open = toggleY.dataset.open !== 'true';
+      setToggle(toggleY, formulaY, open);
+    });
+
+    toggleP.addEventListener('click', () => {
+      const open = toggleP.dataset.open !== 'true';
+      setToggle(toggleP, formulaP, open);
     });
 
     // init
     renderFormulas();
-    outY.textContent = 'y = XXX';
-    outP.textContent = 'p = XXX';
+    setToggle(toggleY, formulaY, false);
+    setToggle(toggleP, formulaP, false);
   </script>
 </body>
 </html>
